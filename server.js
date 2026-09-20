@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
@@ -8,11 +10,14 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json());
+connectDB();
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => console.log('MongoDB connection error:', err));
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
+app.use(express.json());
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send('Server is running!');
